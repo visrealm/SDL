@@ -2,7 +2,7 @@ if(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
   message(FATAL_ERROR "Prevented in-tree build. Please create a build directory outside of the SDL source code and run \"cmake -S ${CMAKE_SOURCE_DIR} -B .\" from there")
 endif()
 
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.5.0)
 project(SDL2 C CXX)
 
 if(WINDOWS_STORE)
@@ -2569,6 +2569,11 @@ endif()
 
 if(SDL_SHARED)
   add_library(SDL2 SHARED ${SOURCE_FILES} ${VERSION_SOURCES})
+
+  # Force Wayland linkage manually
+target_link_libraries(SDL2 PRIVATE  /usr/local/lib/x86_64-linux-gnu/libwayland-client.so  /usr/local/lib/x86_64-linux-gnu/libwayland-egl.so  /usr/local/lib/x86_64-linux-gnu/libwayland-cursor.so)
+
+target_include_directories(SDL2 PRIVATE /usr/local/include)
   # alias target for in-tree builds
   add_library(SDL2::SDL2 ALIAS SDL2)
   if(APPLE)
