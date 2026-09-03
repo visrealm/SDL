@@ -2570,10 +2570,13 @@ endif()
 if(SDL_SHARED)
   add_library(SDL2 SHARED ${SOURCE_FILES} ${VERSION_SOURCES})
 
-  # Force Wayland linkage manually
-target_link_libraries(SDL2 PRIVATE  /usr/local/lib/x86_64-linux-gnu/libwayland-client.so  /usr/local/lib/x86_64-linux-gnu/libwayland-egl.so  /usr/local/lib/x86_64-linux-gnu/libwayland-cursor.so)
-
-target_include_directories(SDL2 PRIVATE /usr/local/include)
+  # Force Wayland linkage manually, on a box that actually has those libraries.
+  # The paths are absolute and Linux-only, so unguarded they reach every other
+  # platform too and the link fails looking for a .so that cannot be there.
+  if(HAVE_VIDEO_WAYLAND AND EXISTS "/usr/local/lib/x86_64-linux-gnu/libwayland-client.so")
+    target_link_libraries(SDL2 PRIVATE  /usr/local/lib/x86_64-linux-gnu/libwayland-client.so  /usr/local/lib/x86_64-linux-gnu/libwayland-egl.so  /usr/local/lib/x86_64-linux-gnu/libwayland-cursor.so)
+    target_include_directories(SDL2 PRIVATE /usr/local/include)
+  endif()
   # alias target for in-tree builds
   add_library(SDL2::SDL2 ALIAS SDL2)
   if(APPLE)

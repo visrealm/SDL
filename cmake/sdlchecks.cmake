@@ -608,9 +608,12 @@ endmacro()
 macro(CheckWayland)
   if(VIDEO_WAYLAND)
     pkg_check_modules(WAYLAND wayland-client wayland-scanner wayland-egl wayland-cursor egl xkbcommon)
-    
-    set(WAYLAND_LIBRARIES /usr/local/lib/x86_64-linux-gnu/libwayland-client.so /usr/local/lib/x86_64-linux-gnu/libwayland-egl.so /usr/local/lib/x86_64-linux-gnu/libwayland-cursor.so)
-    set(WAYLAND_INCLUDE_DIRS /usr/local/include)
+
+    # Override what pkg-config found, but only where these actually exist.
+    if(EXISTS "/usr/local/lib/x86_64-linux-gnu/libwayland-client.so")
+      set(WAYLAND_LIBRARIES /usr/local/lib/x86_64-linux-gnu/libwayland-client.so /usr/local/lib/x86_64-linux-gnu/libwayland-egl.so /usr/local/lib/x86_64-linux-gnu/libwayland-cursor.so)
+      set(WAYLAND_INCLUDE_DIRS /usr/local/include)
+    endif()
 
     pkg_check_modules(WAYLAND_SCANNER_1_15 "wayland-scanner>=1.15")
 
